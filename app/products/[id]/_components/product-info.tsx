@@ -3,6 +3,16 @@ import Cart from "@/app/_components/cart";
 import DeliveryInfo from "@/app/_components/delevery-info";
 import DiscountBadge from "@/app/_components/discount-badge";
 import ProductList from "@/app/_components/product-list";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/app/_components/ui/alert-dialog";
 import { Button } from "@/app/_components/ui/button";
 import {
   Sheet,
@@ -31,16 +41,32 @@ interface ProductInfoProps {
 }
 
 const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
-  const [quant, setQuant] = useState(1);
+  const [quantity, setQuant] = useState(1);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] =
+    useState(false);
 
   const { addProductToCart, products } = useContext(CartContext);
 
   console.log(products);
 
-  const handleAddToCartClick = () => {
-    addProductToCart(product, quant);
+  const addToCart = ({ emptyCart }: { emptyCart?: boolean }) => {
+    addProductToCart({ product, quantity, emptyCart });
     setIsCartOpen(true);
+  };
+
+  const handleAddToCartClick = () => {
+    const hasDifferentRestaurantProduct = products.some(
+      (cartProduct) => cartProduct.restaurantId !== product.restaurantId,
+    );
+
+    if (hasDifferentRestaurantProduct) {
+      return setIsConfirmationDialogOpen(true);
+    }
+
+    addToCart({
+      emptyCart: false,
+    });
   };
 
   const handleIncreaseQuantityClick = () => {
@@ -74,7 +100,7 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-semibold">
-                {formatCurrency(calcProductTotalPrice(product) * quant)}
+                {formatCurrency(calcProductTotalPrice(product) * quantity)}
               </h2>
               {product.discountPercentage > 0 && (
                 <DiscountBadge product={product} />
@@ -95,7 +121,7 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
             >
               <ChevronLeftIcon />
             </Button>
-            <span className="w-4 text-center">{quant}</span>
+            <span className="w-4 text-center">{quantity}</span>
             <Button size="icon" onClick={handleIncreaseQuantityClick}>
               <ChevronRightIcon />
             </Button>
@@ -132,6 +158,29 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
           <Cart />
         </SheetContent>
       </Sheet>
+
+      <AlertDialog
+        open={isConfirmationDialogOpen}
+        onOpenChange={setIsConfirmationDialogOpen}
+      >
+        <AlertDialogContent className="rounded-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Você só pode adicionar itens de um resturante por vez
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja mesmo adicionar isso a sua sacola? Isso limpará sua sacola
+              atual.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => addToCart({ emptyCart: true })}>
+              Esvaziar sacola e adicionar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

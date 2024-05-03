@@ -1,7 +1,7 @@
 "use client";
 import { calcProductTotalPrice, formatCurrency } from "@/app/_helpers/price";
 import { cn } from "@/app/_lib/utils";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { ArrowDownIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
