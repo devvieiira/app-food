@@ -170,7 +170,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       );
     }
 
-    setProducts((prev) => [...prev, { ...product, quantity: quantity }]);
+    // setProducts((prev) => [...prev, { ...product, quantity: quantity }]);
   };
 
   return (
