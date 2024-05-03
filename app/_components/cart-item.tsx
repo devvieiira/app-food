@@ -2,7 +2,7 @@ import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { useContext } from "react";
 import { calcProductTotalPrice, formatCurrency } from "../_helpers/price";
-import { CartContext, type CartProduct } from "../_providers/contexts/cart";
+import { CartContext, type CartProduct } from "../contexts/cart";
 import { Button } from "./ui/button";
 
 interface CartItemProps {

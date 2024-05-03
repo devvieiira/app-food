@@ -1,7 +1,7 @@
 "use client";
 import { useContext } from "react";
 import { formatCurrency } from "../_helpers/price";
-import { CartContext } from "../_providers/contexts/cart";
+import { CartContext } from "../contexts/cart";
 import CartItem from "./cart-item";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";

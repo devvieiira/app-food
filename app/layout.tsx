@@ -1,7 +1,8 @@
+import { Toaster } from "@/app/_components/ui/sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { CartProvider } from "./_providers/contexts/cart";
-import AuthProvider from "./_providers/next-auth";
+import AuthProvider from "./_providers/auth";
+import { CartProvider } from "./contexts/cart";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,9 +19,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} [&::-webkit-scrollbar]:hidden`}>
+      <body className={inter.className}>
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
+
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

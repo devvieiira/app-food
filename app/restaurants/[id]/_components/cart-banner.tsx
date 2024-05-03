@@ -10,7 +10,7 @@ import {
   SheetTrigger,
 } from "@/app/_components/ui/sheet";
 import { formatCurrency } from "@/app/_helpers/price";
-import { CartContext } from "@/app/_providers/contexts/cart";
+import { CartContext } from "@/app/contexts/cart";
 import type { Restaurant } from "@prisma/client";
 import { useContext } from "react";
 

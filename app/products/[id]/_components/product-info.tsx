@@ -21,7 +21,7 @@ import {
   SheetTitle,
 } from "@/app/_components/ui/sheet";
 import { calcProductTotalPrice, formatCurrency } from "@/app/_helpers/price";
-import { CartContext } from "@/app/_providers/contexts/cart";
+import { CartContext } from "@/app/contexts/cart";
 import type { Prisma } from "@prisma/client";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
