@@ -9,7 +9,9 @@ export interface CartProduct
     include: {
       restaurant: {
         select: {
+          id: true;
           deliveryFee: true;
+          deliveryTimeMinutes: true;
         };
       };
     };
@@ -19,8 +21,8 @@ export interface CartProduct
 
 interface ICartContext {
   products: CartProduct[];
-  subTotalPriece: number;
-  totalPriece: number;
+  subtotalPrice: number;
+  totalPrice: number;
   totalDiscounts: number;
   totalQuanty: number;
   addProductToCart: ({
@@ -43,30 +45,32 @@ interface ICartContext {
   decreaseProductQuantity: (productId: string) => void;
   increaseProductQuantity: (productId: string) => void;
   removeProductFromCart: (productId: string) => void;
+  clearCart: () => void;
 }
 
 export const CartContext = createContext<ICartContext>({
   products: [],
-  totalPriece: 0,
-  subTotalPriece: 0,
+  totalPrice: 0,
+  subtotalPrice: 0,
   totalDiscounts: 0,
   totalQuanty: 0,
   addProductToCart: () => {},
   decreaseProductQuantity: () => {},
   increaseProductQuantity: () => {},
   removeProductFromCart: () => {},
+  clearCart: () => {},
 });
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [products, setProducts] = useState<CartProduct[]>([]);
 
-  const subTotalPriece = useMemo(() => {
+  const subtotalPrice = useMemo(() => {
     return products.reduce((acc, product) => {
       return acc + Number(product.price) * product.quantity;
     }, 0);
   }, [products]);
 
-  const totalPriece = useMemo(() => {
+  const totalPrice = useMemo(() => {
     return (
       products.reduce((acc, product) => {
         return acc + calcProductTotalPrice(product) * product.quantity;
@@ -81,9 +85,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [products]);
 
   const totalDiscounts =
-    subTotalPriece -
-    totalPriece +
-    Number(products?.[0]?.restaurant?.deliveryFee);
+    subtotalPrice - totalPrice + Number(products?.[0]?.restaurant?.deliveryFee);
+
+  const clearCart = () => {
+    return setProducts([]);
+  };
 
   const decreaseProductQuantity = (productId: string) => {
     return setProducts((prev) =>
@@ -171,9 +177,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     <CartContext.Provider
       value={{
         products,
-        subTotalPriece,
+        subtotalPrice,
         totalDiscounts,
-        totalPriece,
+        clearCart,
+        totalPrice,
         totalQuanty,
         addProductToCart,
         decreaseProductQuantity,
