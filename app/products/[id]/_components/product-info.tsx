@@ -1,6 +1,7 @@
 "use client";
+
 import Cart from "@/app/_components/cart";
-import DeliveryInfo from "@/app/_components/delevery-info";
+import DeliveryInfo from "@/app/_components/delivery-info";
 import DiscountBadge from "@/app/_components/discount-badge";
 import ProductList from "@/app/_components/product-list";
 import {
@@ -20,14 +21,17 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/app/_components/ui/sheet";
-import { calcProductTotalPrice, formatCurrency } from "@/app/_helpers/price";
+import {
+  calculateProductTotalPrice,
+  formatCurrency,
+} from "@/app/_helpers/price";
 import { CartContext } from "@/app/contexts/cart";
 import type { Prisma } from "@prisma/client";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
 import { useContext, useState } from "react";
 
-interface ProductInfoProps {
+interface ProductDetailsProps {
   product: Prisma.ProductGetPayload<{
     include: {
       restaurant: true;
@@ -40,15 +44,16 @@ interface ProductInfoProps {
   }>[];
 }
 
-const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
-  const [quantity, setQuant] = useState(1);
+const ProductDetails = ({
+  product,
+  complementaryProducts,
+}: ProductDetailsProps) => {
+  const [quantity, setQuantity] = useState(1);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] =
     useState(false);
 
   const { addProductToCart, products } = useContext(CartContext);
-
-  console.log(products);
 
   const addToCart = ({ emptyCart }: { emptyCart?: boolean }) => {
     addProductToCart({ product, quantity, emptyCart });
@@ -56,10 +61,12 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
   };
 
   const handleAddToCartClick = () => {
+    // VERIFICAR SE HÁ ALGUM PRODUTO DE OUTRO RESTAURANTE NO CARRINHO
     const hasDifferentRestaurantProduct = products.some(
       (cartProduct) => cartProduct.restaurantId !== product.restaurantId,
     );
 
+    // SE HOUVER, ABRIR UM AVISO
     if (hasDifferentRestaurantProduct) {
       return setIsConfirmationDialogOpen(true);
     }
@@ -69,19 +76,19 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
     });
   };
 
-  const handleIncreaseQuantityClick = () => {
-    setQuant((current) => current + 1);
-  };
-  const handleDeacreaseQuantityClick = () => {
-    setQuant((current) => {
-      if (current === 1) return 1;
+  const handleIncreaseQuantityClick = () =>
+    setQuantity((currentState) => currentState + 1);
+  const handleDecreaseQuantityClick = () =>
+    setQuantity((currentState) => {
+      if (currentState === 1) return 1;
 
-      return current - 1;
+      return currentState - 1;
     });
-  };
+
   return (
     <>
       <div className="relative z-50 mt-[-1.5rem] rounded-tl-3xl rounded-tr-3xl bg-white py-5">
+        {/* RESTAURANTE */}
         <div className="flex items-center gap-[0.375rem] px-5">
           <div className="relative h-6 w-6">
             <Image
@@ -95,38 +102,48 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
             {product.restaurant.name}
           </span>
         </div>
-        <h1 className="mb-3 mt-1 px-5 text-xl font-semibold">{product.name}</h1>
+
+        {/* NOME DO PRODUTO */}
+        <h1 className="mb-2 mt-1 px-5 text-xl font-semibold">{product.name}</h1>
+
+        {/* PREÇO DO PRODUTO E QUANTIDADE */}
         <div className="flex justify-between px-5">
+          {/* PREÇO COM DESCONTO */}
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-semibold">
-                {formatCurrency(calcProductTotalPrice(product) * quantity)}
+                {formatCurrency(calculateProductTotalPrice(product))}
               </h2>
               {product.discountPercentage > 0 && (
                 <DiscountBadge product={product} />
               )}
             </div>
+
+            {/* PREÇO ORIGINAL */}
             {product.discountPercentage > 0 && (
               <p className="text-sm text-muted-foreground">
                 De: {formatCurrency(Number(product.price))}
               </p>
             )}
           </div>
+
+          {/* QUANTIDADE */}
           <div className="flex items-center gap-3 text-center">
             <Button
               size="icon"
               variant="ghost"
               className="border border-solid border-muted-foreground"
-              onClick={handleDeacreaseQuantityClick}
+              onClick={handleDecreaseQuantityClick}
             >
               <ChevronLeftIcon />
             </Button>
-            <span className="w-4 text-center">{quantity}</span>
+            <span className="w-4">{quantity}</span>
             <Button size="icon" onClick={handleIncreaseQuantityClick}>
               <ChevronRightIcon />
             </Button>
           </div>
         </div>
+
         <div className="px-5">
           <DeliveryInfo restaurant={product.restaurant} />
         </div>
@@ -140,6 +157,7 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
           <h3 className="px-5 font-semibold">Sucos</h3>
           <ProductList products={complementaryProducts} />
         </div>
+
         <div className="mt-6 px-5">
           <Button
             className="w-full font-semibold"
@@ -155,7 +173,8 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
           <SheetHeader>
             <SheetTitle className="text-left">Sacola</SheetTitle>
           </SheetHeader>
-          <Cart />
+
+          <Cart setIsOpen={setIsCartOpen} />
         </SheetContent>
       </Sheet>
 
@@ -163,13 +182,13 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
         open={isConfirmationDialogOpen}
         onOpenChange={setIsConfirmationDialogOpen}
       >
-        <AlertDialogContent className="rounded-lg">
+        <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Você só pode adicionar itens de um resturante por vez
+              Você só pode adicionar itens de um restaurante por vez
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Deseja mesmo adicionar isso a sua sacola? Isso limpará sua sacola
+              Deseja mesmo adicionar esse produto? Isso limpará sua sacola
               atual.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -185,4 +204,4 @@ const ProductInfo = ({ product, complementaryProducts }: ProductInfoProps) => {
   );
 };
 
-export default ProductInfo;
+export default ProductDetails;

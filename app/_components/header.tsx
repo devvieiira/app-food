@@ -1,4 +1,5 @@
 "use client";
+
 import {
   HeartIcon,
   HomeIcon,
@@ -25,12 +26,12 @@ const Header = () => {
   const { data } = useSession();
 
   const handleSignOutClick = () => signOut();
-
   const handleSignInClick = () => signIn();
+
   return (
     <div className="flex justify-between px-5 pt-6">
       <div className="relative h-[30px] w-[100px]">
-        <Link href="/home">
+        <Link href="/">
           <Image
             src="/logo.png"
             alt="FSW Foods"
@@ -50,6 +51,7 @@ const Header = () => {
             <MenuIcon />
           </Button>
         </SheetTrigger>
+
         <SheetContent>
           <SheetHeader>
             <SheetTitle className="text-left">Menu</SheetTitle>
@@ -72,7 +74,7 @@ const Header = () => {
                   <div>
                     <h3 className="font-semibold">{data?.user?.name}</h3>
                     <span className="block text-xs text-muted-foreground">
-                      {data.user.email}
+                      {data?.user?.email}
                     </span>
                   </div>
                 </div>
@@ -81,39 +83,43 @@ const Header = () => {
           ) : (
             <>
               <div className="flex items-center justify-between pt-10">
-                <h2 className="font-semibold">Olá. Faça seu login</h2>
-                <Button onClick={handleSignInClick} size="icon">
-                  {" "}
-                  <LogInIcon />{" "}
+                <h2 className="font-semibold">Olá. Faça seu login!</h2>
+                <Button size="icon" onClick={handleSignInClick}>
+                  <LogInIcon />
                 </Button>
               </div>
             </>
           )}
-          <div className="py-6 ">
+
+          <div className="py-6">
             <Separator />
           </div>
+
           <div className="space-y-2">
             <Button
-              className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
               variant="ghost"
+              className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
             >
               <HomeIcon size={16} />
-              <span className="block">Inicio</span>
+              <span className="block">Início</span>
             </Button>
 
             {data?.user && (
               <>
                 <Button
-                  className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
                   variant="ghost"
+                  className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
+                  asChild
                 >
-                  <ScrollTextIcon size={16} />
-                  <span className="block">Meus Pedidos</span>
+                  <Link href="/my-orders">
+                    <ScrollTextIcon size={16} />
+                    <span className="block">Meus Pedidos</span>
+                  </Link>
                 </Button>
 
                 <Button
-                  className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
                   variant="ghost"
+                  className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
                 >
                   <HeartIcon size={16} />
                   <span className="block">Restaurantes Favoritos</span>
@@ -125,14 +131,15 @@ const Header = () => {
           <div className="py-6">
             <Separator />
           </div>
+
           {data?.user && (
             <Button
-              onClick={handleSignOutClick}
-              className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
               variant="ghost"
+              className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
+              onClick={handleSignOutClick}
             >
               <LogOutIcon size={16} />
-              <span className="block">Sair da Conta</span>
+              <span className="block">Sair da conta</span>
             </Button>
           )}
         </SheetContent>

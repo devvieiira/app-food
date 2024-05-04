@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 "use client";
-import { calcProductTotalPrice } from "@/app/_helpers/price";
-import type { Prisma, Product } from "@prisma/client";
+
+import { calculateProductTotalPrice } from "@/app/_helpers/price";
+import { type Prisma, Product } from "@prisma/client";
 import { type ReactNode, createContext, useMemo, useState } from "react";
 
 export interface CartProduct
@@ -24,7 +25,7 @@ interface ICartContext {
   subtotalPrice: number;
   totalPrice: number;
   totalDiscounts: number;
-  totalQuanty: number;
+  totalQuantity: number;
   addProductToCart: ({
     product,
     quantity,
@@ -34,7 +35,9 @@ interface ICartContext {
       include: {
         restaurant: {
           select: {
+            id: true;
             deliveryFee: true;
+            deliveryTimeMinutes: true;
           };
         };
       };
@@ -50,10 +53,10 @@ interface ICartContext {
 
 export const CartContext = createContext<ICartContext>({
   products: [],
-  totalPrice: 0,
   subtotalPrice: 0,
+  totalPrice: 0,
   totalDiscounts: 0,
-  totalQuanty: 0,
+  totalQuantity: 0,
   addProductToCart: () => {},
   decreaseProductQuantity: () => {},
   increaseProductQuantity: () => {},
@@ -73,12 +76,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const totalPrice = useMemo(() => {
     return (
       products.reduce((acc, product) => {
-        return acc + calcProductTotalPrice(product) * product.quantity;
+        return acc + calculateProductTotalPrice(product) * product.quantity;
       }, 0) + Number(products?.[0]?.restaurant?.deliveryFee)
     );
   }, [products]);
 
-  const totalQuanty = useMemo(() => {
+  const totalQuantity = useMemo(() => {
     return products.reduce((acc, product) => {
       return acc + product.quantity;
     }, 0);
@@ -98,6 +101,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           if (cartProduct.quantity === 1) {
             return cartProduct;
           }
+
           return {
             ...cartProduct,
             quantity: cartProduct.quantity - 1,
@@ -151,10 +155,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setProducts([]);
     }
 
+    // VERIFICAR SE O PRODUTO JÁ ESTÁ NO CARRINHO
     const isProductAlreadyOnCart = products.some(
       (cartProduct) => cartProduct.id === product.id,
     );
 
+    // SE ELE ESTIVER, AUMENTAR A SUA QUANTIDADE
     if (isProductAlreadyOnCart) {
       return setProducts((prev) =>
         prev.map((cartProduct) => {
@@ -170,7 +176,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       );
     }
 
-    // setProducts((prev) => [...prev, { ...product, quantity: quantity }]);
+    // SE NÃO, ADICIONÁ-LO COM A QUANTIDADE RECEBIDA
+    setProducts((prev) => [...prev, { ...product, quantity: quantity }]);
   };
 
   return (
@@ -178,10 +185,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       value={{
         products,
         subtotalPrice,
-        totalDiscounts,
-        clearCart,
         totalPrice,
-        totalQuanty,
+        totalDiscounts,
+        totalQuantity,
+        clearCart,
         addProductToCart,
         decreaseProductQuantity,
         increaseProductQuantity,

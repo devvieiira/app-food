@@ -1,4 +1,4 @@
-import DeliveryInfo from "@/app/_components/delevery-info";
+import DeliveryInfo from "@/app/_components/delivery-info";
 import ProductList from "@/app/_components/product-list";
 import { db } from "@/app/_lib/prisma";
 import { StarIcon } from "lucide-react";

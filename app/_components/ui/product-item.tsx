@@ -1,5 +1,9 @@
 "use client";
-import { calcProductTotalPrice, formatCurrency } from "@/app/_helpers/price";
+
+import {
+  calculateProductTotalPrice,
+  formatCurrency,
+} from "@/app/_helpers/price";
 import { cn } from "@/app/_lib/utils";
 import type { Prisma } from "@prisma/client";
 import { ArrowDownIcon } from "lucide-react";
@@ -48,7 +52,7 @@ const ProductItem = ({ product, className }: ProductItemProps) => {
           <h2 className="truncate text-sm">{product.name}</h2>
           <div className="flex items-center gap-1">
             <h3 className="font-semibold">
-              {formatCurrency(calcProductTotalPrice(product))}
+              {formatCurrency(calculateProductTotalPrice(product))}
             </h3>
             {product.discountPercentage > 0 && (
               <span className="text-xs text-muted-foreground line-through">
@@ -56,6 +60,7 @@ const ProductItem = ({ product, className }: ProductItemProps) => {
               </span>
             )}
           </div>
+
           <span className="block text-xs text-muted-foreground">
             {product.restaurant.name}
           </span>
