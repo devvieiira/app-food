@@ -4,9 +4,9 @@ import { Avatar, AvatarImage } from "@/app/_components/ui/avatar";
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { Separator } from "@/app/_components/ui/separator";
+import { CartContext } from "@/app/_context/cart";
 import { formatCurrency } from "@/app/_helpers/price";
-import { CartContext } from "@/app/contexts/cart";
-import type { OrderStatus, Prisma } from "@prisma/client";
+import { OrderStatus, Prisma } from "@prisma/client";
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ const getOrderStatusLabel = (status: OrderStatus) => {
     case "CANCELED":
       return "Cancelado";
     case "COMPLETED":
-      return "Entregue";
+      return "Finalizado";
     case "CONFIRMED":
       return "Confirmado";
     case "DELIVERING":
@@ -48,8 +48,11 @@ const OrderItem = ({ order }: OrderItemProps) => {
   const handleRedoOrderClick = () => {
     for (const orderProduct of order.products) {
       addProductToCart({
-        product: { ...orderProduct.product, restaurant: order.restaurant },
-        quantity: orderProduct.quantity,
+        product: {
+          ...orderProduct.product,
+          restaurant: order.restaurant,
+          quantity: orderProduct.quantity,
+        },
       });
     }
 
@@ -57,13 +60,9 @@ const OrderItem = ({ order }: OrderItemProps) => {
   };
   return (
     <Card>
-      <CardContent className="space-y-1 p-5">
+      <CardContent className="p-5">
         <div
-          className={`w-fit rounded-full px-2 py-1 ${
-            order.status !== "COMPLETED"
-              ? "bg-green-500 text-white"
-              : "bg-[#EEEEEE] text-muted-foreground"
-          }`}
+          className={`w-fit rounded-full bg-[#EEEEEE] px-2 py-1 text-muted-foreground ${order.status !== "COMPLETED" && "bg-green-500 text-white"}`}
         >
           <span className="block text-xs font-semibold">
             {getOrderStatusLabel(order.status)}
@@ -81,20 +80,27 @@ const OrderItem = ({ order }: OrderItemProps) => {
             </span>
           </div>
 
-          <Button variant="ghost" size="icon" className="h-5 w-5" asChild>
+          <Button
+            variant="link"
+            size="icon"
+            className="h-5 w-5 text-black"
+            asChild
+          >
             <Link href={`/restaurants/${order.restaurantId}`}>
               <ChevronRightIcon />
             </Link>
           </Button>
         </div>
+
         <div className="py-3">
           <Separator />
         </div>
+
         <div className="space-y-2">
           {order.products.map((product) => (
-            <div key={product.id} className="flex items-center gap-3">
-              <div className="h5 flex w-5 items-center justify-center rounded-full bg-muted">
-                <span className="block text-xs text-black">
+            <div key={product.id} className="flex items-center gap-2">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-muted-foreground">
+                <span className="block text-xs text-white">
                   {product.quantity}
                 </span>
               </div>
@@ -112,9 +118,9 @@ const OrderItem = ({ order }: OrderItemProps) => {
         <div className="flex items-center justify-between">
           <p className="text-sm">{formatCurrency(Number(order.totalPrice))}</p>
           <Button
-            variant="link"
+            variant="ghost"
             size="sm"
-            className="text-xs"
+            className="text-xs text-primary"
             disabled={order.status !== "COMPLETED"}
             onClick={handleRedoOrderClick}
           >

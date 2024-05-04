@@ -1,5 +1,5 @@
-import type { Prisma } from "@prisma/client";
-import ProductItem from "./ui/product-item";
+import { Prisma } from "@prisma/client";
+import ProductItem from "./product-item";
 
 interface ProductListProps {
   products: Prisma.ProductGetPayload<{
@@ -16,8 +16,8 @@ interface ProductListProps {
 const ProductList = ({ products }: ProductListProps) => {
   return (
     <div className="flex gap-4 overflow-x-scroll px-5 [&::-webkit-scrollbar]:hidden">
-      {products.map((item) => (
-        <ProductItem key={item.id} product={item} />
+      {products.map((product) => (
+        <ProductItem key={product.id} product={product} />
       ))}
     </div>
   );

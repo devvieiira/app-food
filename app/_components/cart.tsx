@@ -1,13 +1,14 @@
-import { CartContext } from "@/app/contexts/cart";
-import { OrderStatus } from "@prisma/client";
-import { Loader2 } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
-import { toast } from "sonner";
-import { createOrder } from "../_actions/order";
-import { formatCurrency } from "../_helpers/price";
+import { CartContext } from "../_context/cart";
 import CartItem from "./cart-item";
+import { Card, CardContent } from "./ui/card";
+import { formatCurrency } from "../_helpers/price";
+import { Separator } from "./ui/separator";
+import { Button } from "./ui/button";
+import { createOrder } from "../_actions/order";
+import { OrderStatus } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,9 +19,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
-import { Button } from "./ui/button";
-import { Card, CardContent } from "./ui/card";
-import { Separator } from "./ui/separator";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface CartProps {
   // eslint-disable-next-line no-unused-vars

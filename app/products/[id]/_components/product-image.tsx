@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/app/_components/ui/button";
 import { Product } from "@prisma/client";
 import { ChevronLeftIcon } from "lucide-react";
@@ -11,19 +12,22 @@ interface ProductImageProps {
 
 const ProductImage = ({ product }: ProductImageProps) => {
   const router = useRouter();
+
+  const handleBackClick = () => router.back();
+
   return (
     <div className="relative h-[360px] w-full">
       <Image
-        className="object-cover"
-        src={product?.imageUrl}
-        alt={product?.name}
+        src={product.imageUrl}
+        alt={product.name}
         fill
+        className="object-cover"
       />
 
       <Button
-        className="absolute left-2 top-2 rounded-full bg-white text-foreground"
+        className="absolute left-4 top-4 rounded-full bg-white text-foreground hover:text-white"
         size="icon"
-        onClick={() => router.back()}
+        onClick={handleBackClick}
       >
         <ChevronLeftIcon />
       </Button>

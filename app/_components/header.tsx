@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import { Button } from "./ui/button";
 import {
   HeartIcon,
   HomeIcon,
@@ -8,12 +10,8 @@ import {
   MenuIcon,
   ScrollTextIcon,
 } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
+import { signIn, signOut, useSession } from "next-auth/react";
 import {
   Sheet,
   SheetContent,
@@ -21,6 +19,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Separator } from "./ui/separator";
 
 const Header = () => {
   const { data } = useSession();
@@ -120,9 +120,12 @@ const Header = () => {
                 <Button
                   variant="ghost"
                   className="w-full justify-start space-x-3 rounded-full text-sm font-normal"
+                  asChild
                 >
-                  <HeartIcon size={16} />
-                  <span className="block">Restaurantes Favoritos</span>
+                  <Link href="/my-favorite-restaurants">
+                    <HeartIcon size={16} />
+                    <span className="block">Restaurantes Favoritos</span>
+                  </Link>
                 </Button>
               </>
             )}
