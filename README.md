@@ -11,4 +11,4 @@ Site feito para mobile first, não foi implementado a sua versão para desktop a
 
 o app se encontra na vercel para testes, você pode acessá-lo pelo link abaixo:
 
-[KingFoods](https://app-food-iota.vercel.app/)
+>[KingFoods](https://app-food-iota.vercel.app/)
