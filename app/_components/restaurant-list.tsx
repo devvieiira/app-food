@@ -12,15 +12,12 @@ const RestaurantList = async () => {
     where: { userId: session?.user?.id },
   });
 
-  console.log(userFavoriteRestaurants);
-
   return (
     <div className="flex gap-4 overflow-x-scroll px-5 [&::-webkit-scrollbar]:hidden">
       {restaurants.map((restaurant) => (
         <RestaurantItem
           key={restaurant.id}
           restaurant={restaurant}
-          userId={session?.user?.id}
           userFavoriteRestaurants={userFavoriteRestaurants}
         />
       ))}

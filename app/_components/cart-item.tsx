@@ -16,8 +16,6 @@ const CartItem = ({ cartProduct }: CartItemProps) => {
     removeProductFromCart,
   } = useContext(CartContext);
 
-  console.log("CartItem");
-
   const handleDecreaseQuantityClick = () =>
     decreaseProductQuantity(cartProduct.id);
 
@@ -35,6 +33,7 @@ const CartItem = ({ cartProduct }: CartItemProps) => {
             src={cartProduct.imageUrl}
             alt={cartProduct.name}
             fill
+            sizes="100%"
             className="rounded-lg object-cover"
           />
         </div>
